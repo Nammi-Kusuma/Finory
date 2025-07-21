@@ -1,5 +1,5 @@
 export default function Home() {
   return (
-    <div>Hi</div>
+    <div className="mt-40">Hi</div>
   );
 }
