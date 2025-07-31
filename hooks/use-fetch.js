@@ -22,10 +22,6 @@ const useFetch = (cb) => {
         }
     }
 
-    useEffect(() => {
-        func()
-    }, [])
-
     return { data, loading, error, func, setData }
 }
 

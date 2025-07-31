@@ -2,12 +2,17 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server"
+import { revalidatePath } from "next/cache"
 
 const serializetransaction = (transaction) => {
     const serialized = { ...transaction };
-    
-    if(transaction.balance) {
+
+    if (transaction.balance) {
         serialized.balance = transaction.balance.toNumber();
+    }
+
+    if(transaction.amount) {
+        serialized.amount = transaction.amount.toNumber();
     }
 
     return serialized;
@@ -16,7 +21,7 @@ const serializetransaction = (transaction) => {
 export async function createAccount(data) {
     try {
         const { userId } = await auth();
-        if(!userId) throw new Error("Unauthorized");
+        if (!userId) throw new Error("Unauthorized");
 
         const user = await db.user.findUnique({
             where: {
@@ -24,20 +29,20 @@ export async function createAccount(data) {
             },
         });
 
-        if(!user) throw new Error("User not found");
+        if (!user) throw new Error("User not found");
 
         const balanceFloat = parseFloat(data.balance);
-        if(isNaN(balanceFloat)) throw new Error("Invalid balance");
+        if (isNaN(balanceFloat)) throw new Error("Invalid balance");
 
         const existingAccount = await db.account.findMany({
             where: {
                 userId: user.id,
             },
         });
-        
+
         const shouldDef = existingAccount.length === 0 ? true : data.isDefault;
 
-        if(shouldDef) {
+        if (shouldDef) {
             await db.account.updateMany({
                 where: {
                     userId: user.id,
@@ -66,4 +71,32 @@ export async function createAccount(data) {
         console.error("Error creating account:", error);
         return { success: false, error: error.message };
     }
+}
+
+export async function getUserAccounts() {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await db.user.findUnique({
+        where: {
+            clerkUserId: userId,
+        },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    const accounts = await db.account.findMany({
+        where: { userId: user.id },
+        orderBy: { createdAt: "desc" },
+        include: {
+            _count: {
+                select: {
+                    transactions: true,
+                }
+            }
+        }
+    });
+
+    const serializedAccount = accounts.map(serializetransaction);
+    return serializedAccount;
 }
