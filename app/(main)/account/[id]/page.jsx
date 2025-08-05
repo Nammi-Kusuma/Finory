@@ -3,16 +3,17 @@ import { getAccountWithTransactions } from '@/actions/accounts'
 import { notFound } from 'next/navigation';
 import TransactionsTable from '../_components/TransactionsTable';
 import { BarLoader } from 'react-spinners';
+import AccountChart from '../_components/AccountChart';
 
 const AccountPage = async ({ params }) => {
-    const { id } = params;
-    const accountData = await getAccountWithTransactions(id);  
+  const { id } = params;
+  const accountData = await getAccountWithTransactions(id);
 
-    if(!accountData) {
-        notFound();
-    }
+  if (!accountData) {
+    notFound();
+  }
 
-    const transactions = accountData.transactions;
+  const transactions = accountData.transactions;
 
   return (
     <div className="space-y-8 px-5">
@@ -38,7 +39,11 @@ const AccountPage = async ({ params }) => {
       </div>
 
       <Suspense fallback={<BarLoader className='mt-4' width={"100%"} color="#9333ea" />}>
-        <TransactionsTable transactions={transactions}/>
+        <AccountChart transactions={transactions} />
+      </Suspense>
+
+      <Suspense fallback={<BarLoader className='mt-4' width={"100%"} color="#9333ea" />}>
+        <TransactionsTable transactions={transactions} />
       </Suspense>
     </div>
   )
