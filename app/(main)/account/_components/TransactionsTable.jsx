@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { categoryColors } from '@/data/categories';
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, ChevronUp, Clock, MoreHorizontal, RefreshCw, Search } from 'lucide-react';
+import { ChevronDown, ChevronUp, Clock, MoreHorizontal, RefreshCw, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
@@ -19,6 +19,8 @@ import { deleteTransactions } from '@/actions/accounts';
 import useFetch from '@/hooks/use-fetch';
 import { toast } from 'sonner';
 import { BarLoader } from 'react-spinners';
+
+const ITEMS_PER_PAGE = 25;
 
 const recurringIntervals = {
   DAILY: "Daily",
@@ -37,6 +39,7 @@ const TransactionsTable = ({ transactions }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [recurringFilter, setRecurringFilter] = useState("");
+  const [page, setPage] = useState(1);
 
   const { loading: deleteLoading, func: deleteFunc, data: deletedTransactions } = useFetch(deleteTransactions);
 
@@ -131,6 +134,23 @@ const TransactionsTable = ({ transactions }) => {
     setSearchTerm("");
     setTypeFilter("");
     setRecurringFilter("");
+    setSelectedIds([]);
+  }
+
+  const totalPages = Math.ceil(
+    filterASorted.length / ITEMS_PER_PAGE
+  );
+
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (page - 1) * ITEMS_PER_PAGE;
+    return filterASorted.slice(
+      startIndex,
+      startIndex + ITEMS_PER_PAGE
+    );
+  }, [filterASorted, page]);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
     setSelectedIds([]);
   }
 
@@ -230,16 +250,16 @@ const TransactionsTable = ({ transactions }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filterASorted.length === 0 ? (<TableRow>
+            {paginatedTransactions.length === 0 ? (<TableRow>
               <TableCell colSpan={8} className="h-24 text-center">
                 No transactions.
               </TableCell>
             </TableRow>) :
               (
-                filterASorted.map((transaction) => (
+                paginatedTransactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell>
-                      <Checkbox onCheckedChange={() => handleSelect(transaction.id)} checked={selectedIds.includes(transaction.id)} disabled={filterASorted.length === 0} />
+                      <Checkbox onCheckedChange={() => handleSelect(transaction.id)} checked={selectedIds.includes(transaction.id)} disabled={paginatedTransactions.length === 0} />
                     </TableCell>
                     <TableCell className="font-medium">{format(new Date(transaction.date), "PP")}</TableCell>
                     <TableCell>{transaction.description}</TableCell>
@@ -299,6 +319,30 @@ const TransactionsTable = ({ transactions }) => {
           </TableBody>
         </Table>
       </div>
+
+      {transactions.length > 10 && (
+        <div className="flex justify-center items-center gap-2 mt-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page === 1}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="text-sm">
+            Page {page} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page === totalPages}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
