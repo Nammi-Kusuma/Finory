@@ -38,30 +38,20 @@ const TransactionsTable = ({ transactions }) => {
   const [typeFilter, setTypeFilter] = useState("");
   const [recurringFilter, setRecurringFilter] = useState("");
 
-  const { loading: deleteLoading, func: deleteFunc, data: deletedTransactions, error: deleteError } = useFetch(deleteTransactions);
+  const { loading: deleteLoading, func: deleteFunc, data: deletedTransactions } = useFetch(deleteTransactions);
 
   const handleDelete = async () => {
     if(!window.confirm("Are you sure you want to delete these transactions?")) return;
 
     await deleteFunc(selectedIds);
-
-    if(deletedTransactions) {
-      setSelectedIds([]);
-      router.refresh();
-    }
+    setSelectedIds([]);
   }
 
   useEffect(() => {
     if(deletedTransactions && !deleteLoading) {
       toast.success("Transactions deleted successfully");
-    } else {
-      toast.error(deleteError?.message || "Failed to delete transactions");
-    }
-
-    if(deleteLoading) {
-      toast.loading("Deleting transactions...");
-    }
-  }, [deletedTransactions, deleteLoading, deleteError]);
+    } 
+  }, [deletedTransactions]);
 
   const filterASorted = useMemo(() => {
     let res = [...transactions];
@@ -297,6 +287,7 @@ const TransactionsTable = ({ transactions }) => {
                           >Edit</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className="text-destructive"
+                            onClick={() => deleteFunc([transaction.id])}
                           >Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

@@ -148,7 +148,7 @@ export async function deleteTransactions(transactionIds) {
                 await tx.account.update({
                     where: {
                         id: accountId,
-                        userId: user.id,
+                        // userId: user.id,
                     },
                     data: {
                         balance: {
@@ -159,8 +159,9 @@ export async function deleteTransactions(transactionIds) {
             }
         })
 
+        revalidatePath("/dashboard");
         revalidatePath("/account/[id]");
-        return { success: true, data: serializetransaction(transactions) };
+        return { success: true };
     } catch (error) {
         console.error("Error deleting transaction:", error);
         return { success: false, error: error.message };
