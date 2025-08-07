@@ -7,7 +7,7 @@ import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Finalyze",
+  title: "Finory",
   description: "One stop finance platform",
 };
 
@@ -23,8 +23,8 @@ export default function RootLayout({ children }) {
           <Toaster richColors />
           <footer className="bg-blue-50 py-12">
             <div className="container mx-auto px-4 text-center text-gray-600">
-              <p>Finalyze</p>
-              <p>© {new Date().getFullYear()} Finalyze. All rights reserved.</p>
+              <p>Finory</p>
+              <p>© {new Date().getFullYear()} Finory. All rights reserved.</p>
             </div>
           </footer>
         </body>

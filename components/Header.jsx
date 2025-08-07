@@ -12,7 +12,7 @@ const Header = async () => {
         <div className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b">
             <nav className='container mx-auto px-4 py-4 flex justify-between items-center'>
                 {/* <Link href="/"><Image src="/next.svg" alt="Logo" className='h-12 w-auto object-contain' width={60} height={200} /></Link> */}
-                <Link href="/">Finalyze</Link>
+                <Link href="/">Finory</Link>
 
                 <div className='flex items-center gap-2'>
                     <SignedIn>
