@@ -52,9 +52,9 @@ const BudgetCard = ({ initialBudget, currExpenses }) => {
   return (
     <div>
       <Card>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+        <CardHeader className='flex flex-row items-center justify-between space-y-0'>
           <CardTitle className='text-lg font-bold'>Monthly Budget (Default Account)</CardTitle>
-          <div className='flex items-center gap-2 mt-2'>
+          <div className='flex items-center gap-2 mt-1'>
             {isEditing ? (
               <div className='flex items-center gap-2'>
                 <Input type="number" value={newBudget} onChange={(e) => setNewBudget(e.target.value)} className="w-32" placeholder="Enter" disabled={updateBudgetLoading} />
@@ -82,9 +82,9 @@ const BudgetCard = ({ initialBudget, currExpenses }) => {
           </div>
         </CardHeader>
         <CardContent>
-          {updateBudgetLoading && <BarLoader className='mt-4' width={"100%"} color="#9333ea" />}
+          {updateBudgetLoading && <BarLoader className='mt-2' width={"100%"} color="#9333ea" />}
           {!updateBudgetLoading && (
-            <div className='mt-4 space-y-2'>
+            <div className='mt-2 space-y-2'>
               {initialBudget && (<>
                 <Progress value={percentageUsed}
                   extraStyles={`${percentageUsed >= 90
