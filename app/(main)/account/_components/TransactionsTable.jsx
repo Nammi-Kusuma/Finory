@@ -302,9 +302,9 @@ const TransactionsTable = ({ transactions }) => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuLabel
+                          <DropdownMenuItem
                             onClick={() => router.push(`/transaction/create?edit=${transaction.id}`)}
-                          >Edit</DropdownMenuLabel>
+                          >Edit</DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className="text-destructive"
                             onClick={() => deleteFunc([transaction.id])}
