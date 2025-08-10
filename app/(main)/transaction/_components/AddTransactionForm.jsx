@@ -20,6 +20,7 @@ import { Switch } from '@/components/ui/switch'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { useEffect } from 'react'
+import ReceiptScanner from './ReceiptScanner'
 
 const AddTransactionForm = ({ accounts, categories }) => {
     const router = useRouter();
@@ -68,8 +69,22 @@ const AddTransactionForm = ({ accounts, categories }) => {
         }
     }, [error])
 
+    const handleScan = (data) => {
+        if(data){
+            setValue("amount", data.amount.toString())
+            setValue("date", data.date)
+            if(data.category){
+                setValue("category", data.category)
+            }
+            if(data.description){
+                setValue("description", data.description)
+            }
+        }
+    }
+
     return (
         <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
+            <ReceiptScanner onScan={handleScan}/>
             <div className='w-full space-y-2'>
                 <label className='text-sm font-semibold' htmlFor="type">Type</label>
                 <Select onValueChange={(value) => setValue("type", value)} defaultValue={type}>
