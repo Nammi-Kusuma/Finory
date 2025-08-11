@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { transactionSchema } from '@/app/lib/schema'
 import useFetch from '@/hooks/use-fetch'
-import { createTransaction } from '@/actions/transactions'
+import { createTransaction, updateTransaction } from '@/actions/transactions'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
@@ -21,12 +21,28 @@ import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { useEffect } from 'react'
 import ReceiptScanner from './ReceiptScanner'
+import { useSearchParams } from 'next/navigation'
 
-const AddTransactionForm = ({ accounts, categories }) => {
+const AddTransactionForm = ({ accounts, categories, initialData, editMode }) => {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const editId = searchParams.get("edit");
+
     const { register, setValue, handleSubmit, formState: { errors }, watch, getValues, reset } = useForm({
         resolver: zodResolver(transactionSchema),
-        defaultValues: {
+        defaultValues:
+        editMode && initialData ? {
+            type: initialData.type,
+            amount: initialData.amount.toString(),
+            description: initialData.description,
+            accountId: initialData.accountId,
+            category: initialData.category,
+            date: new Date(initialData.date),
+            isRecurring: initialData.isRecurring,
+            ...(initialData.recurringInterval && {
+              recurringInterval: initialData.recurringInterval,
+            }),
+        } : {
             type: "EXPENSE",
             amount: 0,
             description: "",
@@ -38,7 +54,7 @@ const AddTransactionForm = ({ accounts, categories }) => {
         },
     });
 
-    const { loading, func: createTransactionFunc, data: createdTransaction, error } = useFetch(createTransaction);
+    const { loading, func: transactionFunc, data: createdTransaction, error } = useFetch(editMode ? updateTransaction : createTransaction);
 
     const type = watch("type");
     const isRecurring = watch("isRecurring");
@@ -52,20 +68,24 @@ const AddTransactionForm = ({ accounts, categories }) => {
             amount: parseFloat(data.amount),
         }
 
-        await createTransactionFunc(transactionData)
+        if(editMode && editId){
+            await transactionFunc(editId, transactionData)
+        }else{
+            await transactionFunc(transactionData)
+        }
     }
 
     useEffect(() => {
         if (createdTransaction?.success && !loading) {
-            toast.success("Transaction created successfully")
+            toast.success(editMode ? "Transaction updated successfully" : "Transaction created successfully")
             reset()
             router.push(`/account/${createdTransaction.data.accountId}`)
         }
-    }, [createdTransaction, loading])
+    }, [createdTransaction, loading, editMode])
 
     useEffect(() => {
         if (error) {
-            toast.error(error.message || "Failed to create transaction")
+            toast.error(error.message || "Failed to " + (editMode ? "update" : "create") + " transaction")
         }
     }, [error])
 
@@ -84,7 +104,7 @@ const AddTransactionForm = ({ accounts, categories }) => {
 
     return (
         <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
-            <ReceiptScanner onScan={handleScan}/>
+            {!editMode && <ReceiptScanner onScan={handleScan}/>}
             <div className='w-full space-y-2'>
                 <label className='text-sm font-semibold' htmlFor="type">Type</label>
                 <Select onValueChange={(value) => setValue("type", value)} defaultValue={type}>
@@ -244,10 +264,10 @@ const AddTransactionForm = ({ accounts, categories }) => {
                     {loading ? (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {"Creating..."}
+                            {editMode ? "Updating..." : "Creating..."}
                         </>
                     ) : (
-                        "Create Transaction"
+                        editMode ? "Update Transaction" : "Create Transaction"
                     )}
                 </Button>
             </div>
