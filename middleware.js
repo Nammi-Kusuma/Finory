@@ -5,6 +5,12 @@ const isProtected = createRouteMatcher([
   "/dashboard(.*)",
   "/account(.*)",
   "/transaction(.*)",
+  "/splito/dashboard(.*)",
+  "/splito/expenses(.*)",
+  "/splito/settlements(.*)",
+  "/splito/groups(.*)",
+  "/splito/contacts(.*)",
+  "/splito/person(.*)",
 ])
 
 const aj = arcjet({

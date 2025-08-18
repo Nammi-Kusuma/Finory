@@ -3,6 +3,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
+import { ConvexClientProvider } from "@/components/convexClientProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,11 +15,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
+      <ConvexClientProvider>
       <html lang="en">
         <body
           className={inter.className}
         >
-          <Header />
+          <Header title="Finory"/>
           <main className="min-h-screen">{children}</main>
           <Toaster richColors />
           <footer className="bg-blue-50 py-12">
@@ -29,6 +31,7 @@ export default function RootLayout({ children }) {
           </footer>
         </body>
       </html>
+      </ConvexClientProvider>
     </ClerkProvider>
   );
 }
