@@ -10,14 +10,22 @@ import { LayoutDashboard, PenBox } from 'lucide-react'
 import useStoreUserEffect from '@/hooks/useStoreUserEffect'
 import { usePathname } from 'next/navigation'
 
-const Header = ({ title }) => { 
+const Header = ({ title }) => {
     const { user } = useUser();
 
     const pathName = usePathname();
     const { isLoading, isAuthenticated } = useStoreUserEffect();
 
     const [mounted, setMounted] = React.useState(false);
-    React.useEffect(() => setMounted(true), []);
+    React.useEffect(() => {
+        setMounted(true);
+        fetch("/api/check-user")
+            .then(res => res.json())
+            .then(data => {
+                console.log("User checked/created:", data);
+            })
+            .catch(err => console.error("Check user failed:", err))
+    }, []);
 
     if (!mounted) return null;
 
