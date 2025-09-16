@@ -4,7 +4,7 @@ import { ArrowRight, Users, CreditCard, PieChart, Bell, Receipt } from 'lucide-r
 import Link from 'next/link'
 import React from 'react'
 import Image from 'next/image'
-import hero from '../../public/hero.png'
+import hero from '@/public/hero.png'
 import { Card } from '@/components/ui/card'
 
 const FEATURES = [
