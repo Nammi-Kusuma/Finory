@@ -121,6 +121,10 @@
   }
 }
 
+@utility gradient-splito {
+  @apply bg-gradient-to-r from-green-600 to-teal-500;
+}
+
 @layer utilities {
   .gradient {
     @apply bg-gradient-to-br from-blue-600 to-purple-600;
@@ -128,6 +132,10 @@
 
   .gradient-title {
     @apply bg-gradient-to-br from-blue-600 to-purple-600 font-extrabold tracking-tighter pr-2 pb-2 text-transparent bg-clip-text;
+  }
+  
+  .gradient-title-splito {
+    @apply gradient-splito font-extrabold tracking-tighter text-transparent bg-clip-text pb-1 pr-2;
   }
 }
 
