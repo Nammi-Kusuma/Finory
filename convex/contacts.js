@@ -7,15 +7,16 @@ export const getAllContacts = query({
     handler: async (ctx) => {
         const currUser = await ctx.runQuery(internal.users.getCurrentUser);
 
-        const expensesyouPaid = await ctx.db.query("expenses").withIndex("by_user_and_group", (q) => {
-            q.eq("paidByUserId", currUser._id).eq("groupId", undefined);
-        }).collect();
+        const expensesyouPaid = await ctx.db.query("expenses").withIndex("by_user_and_group", (q) => 
+            q.eq("paidByUserId", currUser._id).eq("groupId", undefined)
+        ).collect();
 
-        const expensesyouNotPaid = (await ctx.db.query("expenses").withIndex("by_group", (q) => {
-            q.eq("groupId", undefined);
-        }).collect()).filter((e) => {
-            e.paidByUserId !== currUser._id && e.splits.some(s => s.userId === currUser._id);
-        });
+        const expensesyouNotPaid = (await ctx.db.query("expenses").withIndex("by_group", (q) => 
+            q.eq("groupId", undefined)
+        ).collect()).filter((e) =>
+            e.paidByUserId !== currUser._id &&
+            e.splits.some((s) => s.userId === currUser._id)
+        );
 
         const personalExpenses = [...expensesyouPaid, ...expensesyouNotPaid];
 
@@ -44,13 +45,13 @@ export const getAllContacts = query({
             })
         );
 
-        const userGroups = (await ctx.db.query("groups").collect()).filter(g => g.members.some(m => m.userId === currUser._id).map((g) => ({
+        const userGroups = (await ctx.db.query("groups").collect()).filter(g => g.members.some(m => m.userId === currUser._id)).map((g) => ({
             id: g._id,
             name: g.name,
             description: g.description,
             memberCount: g.members.length,
             type: "group",
-        })));
+        }));
 
         contactUsers.sort((a, b) => a?.name.localeCompare(b?.name));
         userGroups.sort((a, b) => a?.name.localeCompare(b?.name));
