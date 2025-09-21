@@ -36,7 +36,7 @@ const SplitoDashboard = () => {
           <div className="flex  justify-between flex-col sm:flex-row sm:items-center gap-4">
             <h1 className="text-5xl gradient-title-splito">Dashboard</h1>
             <Button asChild>
-              <Link href="/expenses/new">
+              <Link href="/splito/expenses/new">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add expense
               </Link>
