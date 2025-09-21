@@ -2,7 +2,7 @@
 
 import { api } from '@/convex/_generated/api'
 import { useConvexQuery } from '@/hooks/use-convex-query'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BarLoader } from 'react-spinners'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
@@ -12,18 +12,31 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Link from 'next/link'
 import CreateGroupModal from './_components/createGroupModal'
 import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 const Contacts = () => {
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false)
   const { data: contacts, isLoading, error } = useConvexQuery(api.contacts.getAllContacts)
   const router = useRouter()
 
+  const searchParams = useSearchParams()
+  useEffect(() => {
+    const createGroupParam = searchParams.get('createGroup')
+    if (createGroupParam === 'true') {
+      setIsCreateGroupModalOpen(true)
+      const url = new URL(window.location.href)
+      url.searchParams.delete('createGroup')
+
+      router.replace(url.pathname+url.search)
+    }
+  }, [searchParams])
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-12">
         <BarLoader width={"100%"} color="#36d7b7" />
       </div>
-    );
+    );  
   }
 
   const { users, groups } = contacts || { users: [], groups: [] };

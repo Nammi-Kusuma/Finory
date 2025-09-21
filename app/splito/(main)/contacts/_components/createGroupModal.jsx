@@ -6,8 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
-import { useConvexQuery } from '@/hooks/use-convex-query'
+import { useConvexMutation, useConvexQuery } from '@/hooks/use-convex-query'
 import { api } from '@/convex/_generated/api'
+import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { X } from 'lucide-react'
@@ -28,6 +29,7 @@ const createGroupModal = ({ isOpen, onClose, onSuccess }) => {
 
     const { data: currentUser } = useConvexQuery(api.users.getCurrentUser)
     const { data: searchResults, isLoading: isSearching } = useConvexQuery(api.users.searchUsers, { query: searchQuery })
+    const createGroup = useConvexMutation(api.contacts.createGroup)
 
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
         resolver: zodResolver(groupSchema),
@@ -79,11 +81,11 @@ const createGroupModal = ({ isOpen, onClose, onSuccess }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle>Create new Group</DialogTitle>
                 </DialogHeader>
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-2">
                         <Label htmlFor="name">Group Name</Label>
                         <Input type="text" id="name" {...register("name")} placeholder='Enter group name' />
