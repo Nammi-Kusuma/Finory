@@ -59,7 +59,7 @@ export default function PersonExpensesPage() {
               </AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="text-4xl gradient-title">{otherUser?.name}</h1>
+              <h1 className="text-4xl gradient-title-splito">{otherUser?.name}</h1>
               <p className="text-muted-foreground">{otherUser?.email}</p>
             </div>
           </div>

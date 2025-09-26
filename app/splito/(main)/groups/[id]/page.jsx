@@ -58,7 +58,7 @@ export default function GroupExpensesPage() {
               <Users className="h-8 w-8 text-primary" />
             </div>
             <div>
-              <h1 className="text-4xl gradient-title">{group?.name}</h1>
+              <h1 className="text-4xl gradient-title-splito">{group?.name}</h1>
               <p className="text-muted-foreground">{group?.description}</p>
               <p className="text-sm text-muted-foreground mt-1">
                 {members.length} members
