@@ -72,7 +72,7 @@ const ContactsPage = () => {
           ) : (
             <div className="flex flex-col gap-4">
               {users.map((user) => (
-                <Link key={user.id} href={`/person/${user.id}`}>
+                <Link key={user.id} href={`splito/person/${user.id}`}>
                   <Card className="hover:bg-muted/30 transition-colors cursor-pointer">
                     <CardContent className="py-4">
                       <div className="flex items-center justify-between">
@@ -114,7 +114,7 @@ const ContactsPage = () => {
           ) : (
             <div className="flex flex-col gap-4">
               {groups.map((group) => (
-                <Link key={group.id} href={`/groups/${group.id}`}>
+                <Link key={group.id} href={`/splito/groups/${group.id}`}>
                   <Card className="hover:bg-muted/30 transition-colors cursor-pointer">
                     <CardContent className="py-4">
                       <div className="flex items-center justify-between">
@@ -143,7 +143,7 @@ const ContactsPage = () => {
         isOpen={isCreateGroupModalOpen}
         onClose={() => setIsCreateGroupModalOpen(false)}
         onSuccess={(groupId) => {
-          router.push(`/groups/${groupId}`);
+          router.push(`/splito/groups/${groupId}`);
         }}
       />
     </div>
